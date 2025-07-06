@@ -1,0 +1,162 @@
+---
+title: "R Básico"
+format: html
+editor: visual
+---
+
+## Variáveis
+
+Atribuição:
+
+```{r}
+a <- 42
+b <- 3.14
+a * b
+```
+
+Também funciona, mas é estranho...
+
+```{r}
+a = 42
+3.14 -> b
+a * b
+```
+
+Strings
+
+```{r}
+c <- "olá"
+d <- "mundo"
+e <- paste(c, d)
+e
+```
+
+Comentários e ajuda com funções:
+
+```{r}
+help(paste)
+?paste  # ou F1 com cursor em cima da função
+```
+
+## Tipos de dados
+
+```{r}
+paste(
+  '123', typeof(123),
+  'TRUE', typeof(TRUE),
+  'T', typeof(T),
+  '123L', typeof(123L),
+  'Teste', typeof('teste')
+)
+```
+
+## Funções
+
+```{r}
+soma.dois <- function(a, b) {
+  a + b
+}
+
+soma.dois(8, 9)
+```
+
+```{r}
+read.csv("teste.csv")
+```
+
+## Estrutura de dados
+
+### Vetores
+
+Todos os dados do mesmo tipo (\~ np.array)
+
+```{r}
+numeros <- c(2, 5, 8)
+numeros
+```
+
+Indexando vetores (começando por 1!):
+
+```{r}
+numeros[1]
+```
+
+```{r}
+numeros[1:2]
+```
+
+Índices negativos removem o elemento do índice
+
+```{r}
+numeros[c(-1, -2)]
+```
+
+Broadcast por padrão:
+
+```{r}
+numeros * 2
+```
+
+```{r}
+134 == c(134)
+```
+
+```{r}
+2:10
+```
+
+```{r}
+mais_numeros <- matrix(1:10, nrow = 2, byrow = T)
+mais_numeros
+```
+
+```{r}
+mais_numeros[2, 3]
+```
+
+```{r}
+mais_numeros[,2]
+```
+
+### Listas
+
+Dados com tipos diferentes (\~ dict, objetos em python)
+
+```{r}
+pessoa = list(nome = 'João', idade = 32)
+pessoa
+```
+
+```{r}
+pessoa$nome
+```
+
+### Data frames
+
+```{r}
+dados <- data.frame(
+  a = c(1, 2),
+  b = c('x', 'y')
+)
+dados
+```
+
+```{r}
+dados$a
+```
+
+```{r}
+dados["a"]
+```
+
+```{r}
+dados[["a"]]
+```
+
+```{r}
+dados[1,]
+```
+
+```{r}
+as.list(dados[1,])$b
+```

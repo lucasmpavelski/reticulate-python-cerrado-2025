@@ -1,0 +1,45 @@
+---
+title: "R Básico"
+format: html
+editor: visual
+---
+
+## Variáveis
+
+```{r}
+?`<-`
+```
+
+## Tipos de dados
+
+```{r}
+?typeof
+```
+
+## Funções
+
+```{r}
+?`function`
+```
+
+## Estrutura de dados
+
+### Vetores
+
+Todos os dados do mesmo tipo (\~ np.array)
+
+```{r}
+?c
+```
+
+### Listas
+
+```{r}
+?list
+```
+
+### Data frames
+
+```{r}
+?data.frame
+```
