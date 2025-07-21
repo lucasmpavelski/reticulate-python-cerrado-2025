@@ -52,16 +52,38 @@ paste(
 
 ## Funções
 
+Chamando funções (note: o ponto "." não tem significado sintático e pode ser utilizado em nomes de funções e variáveis):
+
+```{r}
+read.csv("teste.csv")
+```
+
+Definindo funções:
+
 ```{r}
 soma.dois <- function(a, b) {
-  a + b
+  a + b # retorna última linha
 }
+
+soma.dois <- function(a, b) a + b # uma linha não precisa de {}
+
+soma.dois <- \(a, b) a + b # função não-nomeada (lambdas)
 
 soma.dois(8, 9)
 ```
 
+É possível definir operadores infixos:
+
 ```{r}
-read.csv("teste.csv")
+`%abs.diff%` <- function(a, b) abs(a - b)
+
+3 %abs.diff% 5
+```
+
+O operador "pipe" serve para inserir o resultado de uma experessão como primeiro argumento da função (encadeamento):
+
+```{r}
+3 |> soma.dois(5) |> soma.dois(-2)
 ```
 
 ## Estrutura de dados
