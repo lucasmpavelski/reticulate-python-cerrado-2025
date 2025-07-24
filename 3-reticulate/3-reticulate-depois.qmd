@@ -1,0 +1,177 @@
+---
+title: "reticulate"
+author: "Lucas M Pavelski"
+format: html
+editor: visual
+---
+
+## Reticulate
+
+![](images/clipboard-471880088.png){width="288"}
+
+Reticulate é um pacote R para **interoperabilidade** com python.
+
+```{r}
+library(reticulate)
+```
+
+Resolve problemas de workflows com passos "divididos" entre as duas linguagens:
+
+![](images/clipboard-141830259.png){width="435"}
+
+O `reticulate` funciona gerenciando uma sessão python dentro da sessão R.
+
+## Ambiente python
+
+É possível ver/criar/gerenciar ambientes python diretamente pelo `reticulate`.
+
+Por exemplo, a função `py_config` exibe informações sobre o python, versão e pacotes instalados:
+
+```{r}
+py_config()
+```
+
+A função `py_install("<nome do pacote>")` permite instalar novos pacotes no ambiente atual:
+
+```{r}
+py_require("scikit-learn")
+py_require("pandas")
+```
+
+> Se necessário, execute `py_require("scikit-learn")` para carregar o módulo instalado na sessão atual.
+
+## 1: Executando scripts Python
+
+A primeira forma de interoperabilidade é executando arquivos python dentro de um script R com a função `source_python(<caminho do arquivo>)`:
+
+```{r}
+source_python("hello_reticulate.py")
+```
+
+Se o script python define alguma função, ela (magicamente) pode ser chamada do R!
+
+```{r}
+hello("R")
+nome
+```
+
+> Cuidado: se houver alguma função ou variável com o mesmo nome no ambiente R, elas serão sobrescritas!
+
+Outra forma de executar scripts em strings é a função `py_run_string("<script python>")`
+
+```{r}
+py_run_string("
+import math
+print(math.pi * 2)
+")
+```
+
+## 2: Importando módulos python
+
+A segunda forma de interoperabilidade é importar módulos python com a função `import("<nome do módulo>")` .
+
+```{r}
+skl = import("sklearn")
+```
+
+As funções do módulo podem ser chamadas com o operador `$` do R:
+
+```{r}
+skl$datasets$load_diabetes()
+```
+
+## 3: Abrindo uma sessão interativa
+
+Executando `repl_python()` no terminal R é possível interagir com python por comandos.
+
+::: callout-warning
+Essa prática pode reduzir a reprodutibilidade do seu código. Ele é mais útil para depuração e testes rápidos.
+:::
+
+## 4: Rodando python em notebooks R
+
+R possui vários motores para notebooks (programação literal):
+
+-   Quarto (este notebook!)
+
+-   RMarkdown
+
+-   JuPyteR
+
+-   RSweave
+
+Quarto é a evolução do RMarkdown e possui várias funcionalidades interessantes, como a integração de Python e R de forma transparente! (ie, com `reticulate`)
+
+```{python}
+import math
+
+def area(raio):
+  return math.pi * raio ** 2
+
+teste = area(1)
+```
+
+Para evitar conflitos de nomes, as variáveis e funções definidas em python são acessadas a partir do ambiente `py$`
+
+```{r}
+py$area(2)
+```
+
+Da mesma forma, é possível acessar dados do R no python pelo objeto `r` :
+
+```{r}
+area_quadrado <- function(r) {
+  r * r
+}
+```
+
+```{python}
+r.area_quadrado(5)
+```
+
+## Conversão automática de tipos
+
+Os tipos em R e Python possuem diferenças. Podemos ver que o `reticulate` realiza algumas conversões:
+
++----------------------------+-------------------+-----------------------+-------------------------------------------+
+| R                          | Python            | Ex. R                 | Ex. Python                                |
++============================+===================+=======================+===========================================+
+| Elemento atômico           | Escalar           | `1L`                  | `1`                                       |
+|                            |                   |                       |                                           |
+|                            |                   | `2`                   | `2.0`                                     |
+|                            |                   |                       |                                           |
+|                            |                   | `"string"`            | `"string"`                                |
++----------------------------+-------------------+-----------------------+-------------------------------------------+
+| Lista não nomeada ou vetor | Lista             | `c(1, 2, 3)`          | `[1.0,2.0,3.0]`                           |
++----------------------------+-------------------+-----------------------+-------------------------------------------+
+| Lista nomeada              | Dict              | `list(a = 1, b = 2)`  | `{"a": 1.0, "b": 2.0}`                    |
++----------------------------+-------------------+-----------------------+-------------------------------------------+
+| Matriz ou array\*          | Array NumPy       | `matrix(1:4, nrow=2)` | `np.array([[1.,2.], [3.,4.]], order='F')` |
++----------------------------+-------------------+-----------------------+-------------------------------------------+
+| Função R                   | Função python     | `function(x) x + 1`   | `def fun(x):`                             |
+|                            |                   |                       |                                           |
+|                            |                   |                       | `return x + 1`                            |
++----------------------------+-------------------+-----------------------+-------------------------------------------+
+| Constantes R               | Constantes Python | `NULL, TRUE, FALSE`   | `None, True, False`                       |
++----------------------------+-------------------+-----------------------+-------------------------------------------+
+
+::: callout-warning
+R ordena os dados de matrizes por coluna (columnwise ou "Fortran-like") e numpy, por padrão, ordena por linha (rowwise ou "C-like").
+
+O reticulate altera o modo de representação automaticamente, mas é nesessário cuidado para evitar muitas cópias de dados.
+:::
+
+Por exemplo, podemos carregar dados em um data frame (ou tibble) do R a partir do arquivo `iris.csv`.
+
+```{r}
+library(tidyverse)
+dt = read_csv("iris.csv")
+dt
+```
+
+Utilizando Python, vamos calular a média de cada coluna com o método `dataframe.mean(axis=0, numeric_only=True)`
+
+```{python}
+import pandas as pd
+r.iris.mean(axis=0, numeric_only=True)
+```

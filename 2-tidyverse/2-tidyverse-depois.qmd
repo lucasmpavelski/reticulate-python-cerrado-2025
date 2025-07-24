@@ -1,0 +1,164 @@
+---
+title: "2-tidyverse"
+format: html
+editor: visual
+---
+
+```{r}
+library(tidyverse)
+```
+
+## Tidyverse
+
+![](images/clipboard-2692503747.png){width="481"}
+
+-   **Conjunto de pacotes** com tafefas comuns para ciência de dados
+
+-   Feitos para **trabalhar em conjunto** de forma natural
+
+-   **Padrões** de design bem estabelecidos
+
+-   Grande influência do autor/estatístico/programador **Hadley Wickham**
+
+Pacotes:
+
+-   **ggplot2**: visualização de dados
+
+-   **dplyr**: manipulação de dados
+
+-   **tidyr**: limpar e organizar dados
+
+-   **readr**: ler e escrever dados
+
+-   **purr**: utilitarios para programação funcional
+
+-   **stringr**, **forcats** e **lubridate**: utilitários para strings, dados categóricos (factors) e dadas
+
+## Carregando tibbles com readr
+
+A função `read_csv` substitui a `read.csv` para ler dados de arquivos csv.
+
+```{r}
+dados <- read_csv("us_house_Sales_data.csv")
+dados
+```
+
+Os dados são lidos no formato **`tibble`**:
+
+-   uma classe que implementa o `data.frame` padrão do R
+
+-   com melhorias de performance
+
+-   melhores padrões
+
+-   melhor exibição de dados
+
+```{r}
+class(dados)
+```
+
+É possível construir `tibbles` linha a linha com a função `tribble`:
+
+```{r}
+dados_tibbles <- tribble(
+  ~a, ~b, ~c,
+   1,  2,  3,
+)
+dados_tibbles
+```
+
+## Manipulando dados com dplyr
+
+`dplyr` possui um conjunto consistente de "verbos" para tarefas comuns de transformações de dados.
+
+Cheatsheet: <https://github.com/rstudio/cheatsheets/blob/main/data-transformation.pdf>
+
+### Filter
+
+Para filtrar linhas de um data frame utilzamos a função `filter(<dados>, <condição>)`:
+
+![](images/clipboard-2946282817.png)
+
+```{r}
+filter(dados, State == 'CA')
+```
+
+Ou com operador pipeline:
+
+```{r}
+dados |>
+  filter(State == 'CA' & `Property Type` == 'Condo')
+```
+
+### Select
+
+Para selecionar colunas de um data frame utilizamos a função `select(<coluna1, coluna2,...>)`:
+
+![](images/clipboard-1310899370.png)
+
+```{r}
+dados |>
+  filter(State == 'CA' & `Property Type` == 'Condo') |>
+  select(Price)
+```
+
+### Mutate e rename
+
+A função `mutate(<dados>, <expressão>)` é utilizada para adicionar novas variáveis ao data frame.
+
+![](images/clipboard-2824729140.png)
+
+Por exemplo, vamos criar uma nova coluna `NumPrice`:
+
+-   removendo caracteres não numéricos com a função `str_remove_all` do pacote `stringr` (incluído no `tidyverse`) utlizando a expressão regular `[^0-9]`
+
+-   convertendo a coluna em número com a função R base `as.numeric`
+
+```{r}
+dados <- dados |>
+  mutate(NumPrice = str_remove_all(Price, '[^0-9]')) |>
+  mutate(NumPrice = as.numeric(NumPrice))
+dados
+```
+
+### Summarize
+
+`group_by` e `summarize` permitem aplicar funções em subgrupos dos dados.
+
+![](images/clipboard-2069869721.png)
+
+Por exemplo, para saber o preço médio por estado:
+
+-   agrupamos pela coluna `State` com `group_by(State)`
+
+-   aplicamos a função base para média `mean` em cada grupo utilizando `summarize(MeanPrice = mean(NumPrice))`
+
+```{r}
+dados |>
+  group_by(State) |>
+  summarise(MeanPrice = mean(NumPrice))
+```
+
+## Visualizando dados com ggplot2
+
+`ggplot2` implementa o conceito chamado "Gramática de Gráficos" (Wilkinson, 1999)
+
+1.  você começa fornecendo os dados para a função `ggplot` com um **mapeamento de estéticas** (`aes`)
+
+    > `aes` mapeia uma característica da visualização (x, y, color, size, etc) para uma coluna do conjunto de dados
+
+2.  então você adiciona **camadas** como `geom_point` ou `geom_histogram`
+
+3.  por fim, você pode adicionar customizações como escadas (`scale_color`), layouts, temas e facets.
+
+Cheatsheet: <https://github.com/rstudio/cheatsheets/blob/main/data-visualization-2.1.pdf>
+
+Vamos plotar o histograma de preços dos preços por estado em um gráfico de barras (`geom_bar`):
+
+```{r}
+dados |>
+  mutate(NumArea = as.numeric(str_remove_all(`Area (Sqft)`, '[^0-9]'))) |>
+  ggplot(aes(x = `Year Built`, y = NumPrice)) +
+    geom_point() +
+    geom_smooth()
+```

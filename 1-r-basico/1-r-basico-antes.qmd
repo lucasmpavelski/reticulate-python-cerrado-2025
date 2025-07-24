@@ -6,20 +6,60 @@ editor: visual
 
 ## Variáveis
 
+Atribuição com operador `<-`:
+
 ```{r}
-?`<-`
+
+```
+
+`=` e `->` também funcionam, mas é estranho...
+
+```{r}
+
+```
+
+Strings
+
+```{r}
+
+```
+
+Comentários e ajuda com funções:
+
+```{r}
+
 ```
 
 ## Tipos de dados
 
 ```{r}
-?typeof
+
 ```
 
 ## Funções
 
+Chamando funções (note: o ponto "." não tem significado sintático e pode ser utilizado em nomes de funções e variáveis):
+
 ```{r}
-?`function`
+
+```
+
+Definindo funções:
+
+```{r}
+
+```
+
+É possível definir operadores infixos:
+
+```{r}
+
+```
+
+O operador "pipe" serve para inserir o resultado de uma experessão como primeiro argumento da função (encadeamento):
+
+```{r}
+
 ```
 
 ## Estrutura de dados
@@ -29,17 +69,85 @@ editor: visual
 Todos os dados do mesmo tipo (\~ np.array)
 
 ```{r}
-?c
+
+```
+
+Indexando vetores (começando por 1!):
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+Índices negativos removem o elemento do índice
+
+```{r}
+
+```
+
+Broadcast por padrão:
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
 ```
 
 ### Listas
 
+Dados com tipos diferentes (\~ dict, objetos em python)
+
 ```{r}
-?list
+
+```
+
+```{r}
+
 ```
 
 ### Data frames
 
 ```{r}
-?data.frame
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
 ```

@@ -1,0 +1,100 @@
+---
+title: "Dashboards Quarto R + Python"
+author: "Python Cerrado"
+format: dashboard
+orientation: columns
+editor: visual
+---
+
+```{r}
+#| include: false
+# install.packages(c("DT"))
+library(tidyverse)
+library(reticulate)
+library(DT)
+```
+
+## Pré-processamento
+
+### Leitura do arquivo CSV
+
+```{r}
+dt <- read_csv("Customers.csv")
+DT::datatable(dt)
+```
+
+### Tratamento de dados
+
+```{r}
+
+# Contando valores faltando em cada coluna
+# dt |>
+#   summarise(across(everything(), \(x) sum(is.na(x)))) |>
+#   pivot_longer(everything())
+
+# Distribuição de idades
+# dt_filtrado |>
+#   ggplot(aes(x = Age)) +
+#   geom_histogram()
+
+# Média de idade por profissão
+# dt_filtrado |>
+#   group_by(Profession) |>
+#   summarize(MeanAge = median(Age))
+
+dt_tratado <- dt |>
+  select(-CustomerID) |> # Removendo coluna com id único
+  drop_na() |> # Removendo linhas com dados não preenchidos
+  group_by(Profession) |> 
+  mutate(Age = if_else(Age < 18, mean(Age), Age)) # Corrigindo idades
+
+# dt_tratado |>
+#   mutate(value = 1) |>
+#   spread(Gender, value, fill = 0) |>
+#   mutate(value = 1) |>
+#   spread(Profession, value, fill = 0)
+
+dt_tratado |>
+  group_by(Profession) |>
+  mutate(AgeByProfession = mean(Age)) |>
+  ggplot(aes(x = Age, y = Profession, alpha=`Annual Income ($)`, color = Gender, group = Profession)) +
+  geom_jitter() +
+  geom_point(aes(x = AgeByProfession), color="red", size=10, shape="|") +
+  theme_light() +
+  labs(y = NULL, x = "Idade") +
+  theme()
+```
+
+## Treinamento
+
+```{python}
+from sklearn.pipeline import Pipeline
+from sklearn.decomposition import PCA
+from sklearn.preprocessing import OneHotEncoder, StandardScaler
+from sklearn.cluster import KMeans
+
+pipeline = Pipeline([
+  ('ohe', OneHotEncoder(drop='first',sparse_output=False)),
+  ('scale', StandardScaler()),
+  ('pca', PCA(3)),
+  ('kmeans', KMeans(4))
+])
+
+pipeline.fit(r.dt_tratado)
+
+clusters = pipeline.predict(r.dt_tratado)
+```
+
+```{r}
+dt_tratado$Cluster = py$clusters
+
+dt_tratado |>
+  group_by(Profession) |>
+  mutate(AgeByProfession = mean(Age)) |>
+  ggplot(aes(x = Age, y = Profession, alpha=`Annual Income ($)`, color = Gender, group = Profession, shape = as.character(Cluster))) +
+  geom_jitter() +
+  geom_point(aes(x = AgeByProfession), color="red", size=10, shape="|") +
+  theme_light() +
+  labs(y = NULL, x = "Idade") +
+  theme()
+```

@@ -1,0 +1,68 @@
+---
+title: "Python ou R: por que não ambos?"
+author: "Lucas M Pavelski"
+format: revealjs
+editor: visual
+---
+
+## O que é R?
+
+-   R é uma linguagem e ambiente para computação estatística e métodos gráficos
+
+-   Amplamente adotada para mineração de dados, bioinformática, análise de dados e ciência de dados
+
+-   Open source sob a licença GNU.
+
+## História do R
+
+-   John M Chambers (Bell Labs) cria a linguagem 'S' em 1976\~1980
+
+-   *Computational Methods for Data Analysis* (John M Chambers, 1978)
+
+-   *Exploratory Data Analysis* (John Tukey, 1978)
+
+-   *Graphical Methods for Data Analysis* (John M Chambers e coautores, 1983)
+
+-   *S: An Interactive Environment for Data Analysis and Graphics (*John M Chambers, 1984*)*
+
+## História do R
+
+-   A implementação da S é licenciada para a TIBCO
+
+-   Em 1991 Ross Ihaka and Robert Gentleman criam a implementação open-source chamada 'R'
+
+-   CRAN (*Comprehensive R Archive Network*)
+
+-   Em 2000, o R Core Team lança a versão R 1.0.0
+
+-   A versão 4.5.1 foi lançada em Junho/2025
+
+## História do R
+
+\<diagrama\>
+
+## Instalando o ambiente R
+
+-   Download R: <https://cran-r.c3sl.ufpr.br/>
+
+-   RStudio Desktop: <https://posit.co/download/rstudio-desktop/>
+
+-   RStudio online: <https://posit.cloud/>
+
+## Executando código R
+
+-   Console R (execute `R` no terminal)
+
+-   Scripts R (Rscript arquivo.R)
+
+-   Notebooks (Quarto, Jupyter, RMarkdown, RSweave, ...)
+
+```{r}
+#| echo: true
+print("Olá, mundo!")
+```
+
+```{r}
+#| echo: true
+cat("Olá,", "mundo!")
+```
